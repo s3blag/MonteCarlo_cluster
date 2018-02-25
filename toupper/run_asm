@@ -1,0 +1,5 @@
+#!/bin/bash
+
+fileName="$1"
+as --32 "${fileName}.s" -o "${fileName}.o"
+ld -m elf_i386 "${fileName}.o" -o "$fileName"

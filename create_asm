@@ -1,0 +1,28 @@
+#!/bin/bash
+
+name="$1"
+fileDirectory="${HOME}/asm/${name}"
+asmFileDirectory="${fileDirectory}/${name}.s"
+mkdir "$fileDirectory"
+touch "$asmFileDirectory"
+cat > $asmFileDirectory << EOF
+#
+#   Autor:          Sebastian Łągiewski
+#   Nr. indeksu:    226173
+#
+.section.data
+    
+    <initialized data here>
+
+.section .bss
+
+    < uninitialized data here>
+
+.section .text
+.globl _start
+_start:
+
+    <instruction code goes here>
+EOF
+cp "${HOME}/asm/run_asm" "$fileDirectory" 
+exit 0
