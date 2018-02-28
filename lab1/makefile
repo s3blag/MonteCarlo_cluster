@@ -1,20 +1,17 @@
 all: hello writeText compareText
 
-# reguła linkowania
 hello: hello.o
 	ld -o hello hello.o
 
 hello.o: hello.s
 	as -o hello.o hello.s
 
-# reguła linkowania
 writeText: writeText.o
 	ld -o writeText writeText.o
 
 writeText.o: writeText.s
 	as -o writeText.o writeText.s
 
-# reguła linkowania
 compareText: compareText.o
 	ld -o compareText compareText.o
 
