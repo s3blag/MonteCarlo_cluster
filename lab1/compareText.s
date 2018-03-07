@@ -6,26 +6,28 @@ SYSWRITE = 4
 STDOUT = 1
 
 .text
-	#sample message
+	# wiadomosc, do ktorej porownujemy
 	msg: .ascii "message"
 	msg_len = . - msg
 
-	#result message
+	# wiadomosc, jesli wiadomosci
+	# sa takie same
 	msg2: .ascii "Equal \n"
 	msg2_len = . - msg2
 
-	#result message
+	# wiadomosc, jesli wiadomosci
+	# nie sa takie same
 	msg3: .ascii "Not Equal \n"
 	msg3_len = . - msg3
 
 .data
-	#keyboard string
+	# wiadomosc wczytana z klawiatury
 	buf: .ascii "       "
 	buf_len = . - buf
 
 .global _start
 _start:
-	#wczytaj z klawiatury
+	# wczytaj z klawiatury
 	mov $SYSREAD, %eax
 	mov $STDIN, %ebx
 	mov $buf, %ecx
@@ -36,7 +38,6 @@ _start:
 	jne not_equal
 	
 reset_counter:
-	#make counter = 0
 	mov $0, %ecx
 
 compare_byte:
@@ -49,7 +50,7 @@ compare_byte:
 	je compare_byte
 
 not_equal:
-	#print result
+	# drukuj wynik na ekran
 	mov $SYSWRITE, %eax
 	mov $STDOUT, %ebx
 	mov $msg3, %ecx
@@ -58,7 +59,7 @@ not_equal:
 	jmp exit
 
 equal:
-	#print result
+	# drukuj wynik na ekran
 	mov $SYSWRITE, %eax
 	mov $STDOUT, %ebx
 	mov $msg2, %ecx

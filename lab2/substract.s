@@ -5,10 +5,10 @@ EXIT_SUCCESS = 0
 
 .section .data
 number1:
-        .long 0x10304008, 0x701100FF, 0x45100020, 0x08570030
+        .long 0xF0304008, 0x701100FF, 0x45100020, 0x08570030
 position = ((. - number1)/4)-1
 number2:
-        .long 0xF040500C, 0x00220026, 0x321000CB, 0x04520031
+        .long 0xE040500C, 0x00220026, 0x321000CB, 0x04520031
 
 .section .text
 .globl _start
@@ -18,22 +18,22 @@ _start:
     movl  $position, %ecx
     clc
     pushf
-add_loop:
+substract_loop:
     popf
     movl  number1(,%ecx,4), %eax
     movl  number2(,%ecx,4), %ebx
-    adcl  %ebx, %eax
+    sbbl  %ebx, %eax
     pushl %eax
     pushf
     subl  $1, %ecx
     cmpl  $0, %ecx
-    jge   add_loop   
+    jge   substract_loop   
 
 check_carry:
     popf
     jnc   exit
 create_carry:
-    pushl $1
+    pushl $0xFFFFFFFF
 exit:
     movl  $SYSEXIT, %eax
     movl  $EXIT_SUCCESS, %ebx
