@@ -46,27 +46,29 @@ void writeToFile(Results results[])
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        2048, results[0].times[0], results[1].times[0]);
+                       "* %f\n"
+                       "/ %f\n",
+                        2048, results[0].times[0], results[1].times[0], results[2].times[0], results[3].times[0]);
 
     fprintf(destFile, "\nTyp obliczeń: SIMD\n"
                        "Liczba liczb: %d\n"
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        4096, results[0].times[1], results[1].times[1]);
+                       "* %f\n"
+                       "/ %f\n",
+                        4096, results[0].times[1], results[1].times[1], results[2].times[1], results[3].times[1]);
     
     fprintf(destFile, "\nTyp obliczeń: SIMD\n"
                        "Liczba liczb: %d\n"
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        8192, results[0].times[2], results[1].times[2]);
+                       "* %f\n"
+                       "/ %f\n",
+                        8192, results[0].times[2], results[1].times[2], results[2].times[2], results[3].times[2]);
+
+
 
 
     fprintf(destFile, "\nTyp obliczeń: SISD\n"
@@ -74,30 +76,27 @@ void writeToFile(Results results[])
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        2048, results[4].times[0], results[5].times[0]);
-
-    
+                       "* %f\n"
+                       "/ %f\n",
+                        2048, results[4].times[0], results[5].times[0], results[6].times[0], results[7].times[0]);
 
     fprintf(destFile, "\nTyp obliczeń: SISD\n"
                        "Liczba liczb: %d\n"
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        4096, results[4].times[1], results[5].times[1]);
+                       "* %f\n"
+                       "/ %f\n",
+                        4096, results[4].times[1], results[5].times[1], results[6].times[1], results[7].times[1]);
 
-    
     fprintf(destFile, "\nTyp obliczeń: SISD\n"
                        "Liczba liczb: %d\n"
                        "Sredni czas: \n"
                        "+ %f\n"
                        "- %f\n"
-                       "* \n"
-                       "/ \n",
-                        8192, results[4].times[2], results[5].times[2]);
+                       "* %f\n"
+                       "/ %f\n",
+                        8192, results[4].times[2], results[5].times[2], results[6].times[2], results[7].times[2]);
 
     fclose(destFile);
 }
@@ -255,9 +254,9 @@ void SIMD_multiply(int numberOfDigits, Results *results)
             asm(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
-                "addps %%xmm1, %%xmm0\n"
+                "mulps %%xmm1, %%xmm0\n"
                 "movups %%xmm0, %0\n"
-                :"=g"(vector2)
+                :"=g"(vector1)
             	:"g"(vector1),"g"(vector2)
             );
             end = clock();
@@ -289,9 +288,78 @@ void SISD_multiply(int numberOfDigits, Results *results)
             asm(
                 "movl %1, %%eax\n"
                 "movl %2, %%ebx\n"
-                "addl %%eax, %%ebx\n"
-                "movl %%ebx, %0\n"
-                :"=g"(digit2)
+                "mull %%ebx\n"
+                "movl %%eax, %0\n"
+                :"=g"(digit1)
+                :"g"(digit1),"g"(digit2)
+            );
+            end = clock();
+
+            avgTime += (double)(end - start)/CLOCKS_PER_SEC;
+        }
+    }
+
+    results->times[numberOfDigits/4096] = avgTime/10;
+}
+
+void SIMD_divide(int numberOfDigits, Results *results)
+{   
+    Vector vector1,
+           vector2;
+    double avgTime = 0,
+           currentTime = 0;
+    clock_t start,
+            end;
+    
+    for(int i = 0; i < 10; i++)
+    {   
+        for(int j = 0; j < numberOfDigits/4; j++)
+        {
+            populateSIMD(&vector1);
+            populateSIMD(&vector2);
+
+            start = clock();
+            asm(
+                "movups %1, %%xmm0\n"
+                "movups %2, %%xmm1\n"
+                "divps %%xmm1, %%xmm0\n"
+                "movups %%xmm0, %0\n"
+                :"=g"(vector1)
+            	:"g"(vector1),"g"(vector2)
+            );
+            end = clock();
+
+            avgTime += (double)(end - start)/CLOCKS_PER_SEC;
+        }
+    }
+
+    results->times[numberOfDigits/4096] = avgTime/10;
+}
+
+void SISD_divide(int numberOfDigits, Results *results)
+{   
+    int digit1,
+        digit2;
+    double avgTime = 0,
+           currentTime = 0;
+    clock_t start,
+            end;
+    
+    for(int i = 0; i < 10; i++)
+    {   
+        for(int j = 0; j < numberOfDigits; j++)
+        {
+            digit1 = populateSISD();
+            digit2 = populateSISD();
+
+            start = clock();
+            asm(
+                "movl $0, %%edx\n"
+                "movl %1, %%eax\n"
+                "movl %2, %%ebx\n"
+                "divl %%ebx\n"
+                "movl %%eax, %0\n"
+                :"=g"(digit1)
                 :"g"(digit1),"g"(digit2)
             );
             end = clock();
@@ -308,19 +376,10 @@ int main()
 {
 	srand (time(NULL));
 
-    Results addResults_SIMD;
-    Results addResults_SISD;
-    Results subResults_SIMD;
-    Results subResults_SISD;
-    Results mulResults_SIMD;
-    Results mulResults_SISD;
-    Results divResults_SIMD;
-    Results divResults_SISD;
-
     Results results[8];
 
     // SIMD
-
+    
     SIMD_add(2048, &results[0]);
     SIMD_add(4096, &results[0]);
     SIMD_add(8192, &results[0]);
@@ -329,13 +388,13 @@ int main()
     SIMD_substract(4096, &results[1]);
     SIMD_substract(8192, &results[1]);
 
-    /*SIMD_multiply(2048, &results[2]);
+    SIMD_multiply(2048, &results[2]);
     SIMD_multiply(4096, &results[2]);
     SIMD_multiply(8192, &results[2]);
-
+    
     SIMD_divide(2048, &results[3]);
     SIMD_divide(4096, &results[3]);
-    SIMD_divide(8192, &results[3]);*/
+    SIMD_divide(8192, &results[3]);
     
     // SISD
 
@@ -347,13 +406,13 @@ int main()
     SISD_substract(4096, &results[5]);
     SISD_substract(8192, &results[5]);
 
-    /*SISD_multiply(2048, &results[6]);
+    SISD_multiply(2048, &results[6]);
     SISD_multiply(4096, &results[6]);
     SISD_multiply(8192, &results[6]);
 
     SISD_divide(2048, &results[7]);
     SISD_divide(4096, &results[7]);
-    SISD_divide(8192, &results[7]);*/
+    SISD_divide(8192, &results[7]);
 
     writeToFile(results);
 
