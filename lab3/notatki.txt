@@ -1,0 +1,45 @@
+########################
+### control register ###
+########################
+
+16 bit. - 0 - 5 : bity maski wyjątków
+
+float - 6-7 znaczących
+double - 15-16 znaczących cyfr
+
+########################
+####### Precyzje #######
+########################
+
+bity 8-9 w control register:
+    00 - single(23 mantysa, faktycznie +1)
+    01 - nieużywane
+    10 - double(52 bity mantysy, faktycznie +1)
+    11 - double extended(default)
+
+############################
+####### Zaokrąglanie #######
+############################
+
+bity 10-11 w control register:
+    00 - do najbliższej(default)
+    01 - do -inf
+    10 - do +inf
+    11 - do 0
+
+fldcw source - załaduj source do control register
+
+flds source - załaduj liczbę single z source
+fldl source - załaduj liczbę double z source
+
+############################
+########## Wyjątki #########
+############################
+
+NaN   -  0/0
++inf  - +x/0
+-inf  - -x/0
++0    - 0/+x
+-0    - 0/-x
+
+x - liczba float

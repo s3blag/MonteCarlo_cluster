@@ -1,0 +1,47 @@
+
+Typ obliczeń: SIMD
+Liczba liczb: 2048
+Sredni czas: 
++ 0.000242
+- 0.000205
+* 
+/ 
+
+Typ obliczeń: SIMD
+Liczba liczb: 4096
+Sredni czas: 
++ 0.000469
+- 0.000458
+* 
+/ 
+
+Typ obliczeń: SIMD
+Liczba liczb: 8192
+Sredni czas: 
++ 0.000939
+- 0.000946
+* 
+/ 
+
+Typ obliczeń: SISD
+Liczba liczb: 2048
+Sredni czas: 
++ 0.000892
+- 0.000917
+* 
+/ 
+
+Typ obliczeń: SISD
+Liczba liczb: 4096
+Sredni czas: 
++ 0.001792
+- 0.001803
+* 
+/ 
+Typ obliczeń: SISD
+Liczba liczb: 8192
+Sredni czas: 
++ 0.003559
+- 0.003611
+* 
+/ 

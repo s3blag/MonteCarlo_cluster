@@ -5,7 +5,7 @@ EXIT_SUCCESS = 0
 
 .section .data
 number1:
-        .long 0x10304008, 0x701100FF, 0x45100020, 0x08570030
+        .long 0x00304008, 0x701100FF, 0x45100020, 0x08570030
 position = ((. - number1)/4)-1
 number2:
         .long 0xF040500C, 0x00220026, 0x321000CB, 0x04520031
