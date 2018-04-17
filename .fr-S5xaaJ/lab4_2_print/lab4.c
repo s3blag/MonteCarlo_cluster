@@ -112,15 +112,18 @@ void SIMD_add(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits/4; j++)
+        for(int j = 0; j < 1; j++)
         {
             populateSIMD(&vector1);
             populateSIMD(&vector2);
-             
+
+            printVector(&vector1);
+            printVector(&vector2);
+            
             start = clock();
-            asm(
+            asm volatile(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "addps %%xmm1, %%xmm0\n"
@@ -129,6 +132,8 @@ void SIMD_add(int numberOfDigits, Results *results)
             	:"g"(vector1),"g"(vector2)
             );
             end = clock();
+
+            printVector(&vector2);
 
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -146,21 +151,26 @@ void SISD_add(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits; j++)
+        for(int j = 0; j < 1; j++)
         {
             digit1 = populateSISD();
             digit2 = populateSISD();
 
+            
+
             start = clock();
             asm volatile(
-                "flds %1\n"
-                "fadds %2\n"
-                :"=t"(digit1)
+                "flds %0\n"
+                "fadds %1\n"
+                "fsts sisd_result\n"
+                :
                 :"g"(digit1),"g"(digit2)
             );
             end = clock();
+
+            printf("%f + %f = %f", digit1, digit2, sisd_result);
             
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -178,12 +188,15 @@ void SIMD_substract(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits/4; j++)
+        for(int j = 0; j < 1; j++)
         {
             populateSIMD(&vector1);
             populateSIMD(&vector2);
+
+            printVector(&vector1);
+            printVector(&vector2);
 
             start = clock();
             asm volatile(
@@ -196,6 +209,8 @@ void SIMD_substract(int numberOfDigits, Results *results)
             );
             end = clock();
 
+            printVector(&vector2);
+
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
     }
@@ -206,15 +221,15 @@ void SIMD_substract(int numberOfDigits, Results *results)
 void SISD_substract(int numberOfDigits, Results *results)
 {
     float digit1,
-          digit2;
+        digit2;
     double avgTime = 0,
            currentTime = 0;
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits; j++)
+        for(int j = 0; j < 1; j++)
         {
             digit1 = populateSISD();
             digit2 = populateSISD();
@@ -222,11 +237,14 @@ void SISD_substract(int numberOfDigits, Results *results)
             start = clock();
             asm volatile(
                 "flds %1\n"
-                "fsubs %2\n"
-                :"=t"(digit1)
+                "fsubs %0\n"
+                "fsts sisd_result\n"
+                :
                 :"g"(digit1),"g"(digit2)
             );
             end = clock();
+
+            printf("%f - %f = %f", digit2, digit1, sisd_result);
 
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -244,12 +262,15 @@ void SIMD_multiply(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits/4; j++)
+        for(int j = 0; j < 1; j++)
         {
             populateSIMD(&vector1);
             populateSIMD(&vector2);
+
+            printVector(&vector1);
+            printVector(&vector2);
 
             start = clock();
             asm volatile(
@@ -261,6 +282,8 @@ void SIMD_multiply(int numberOfDigits, Results *results)
             	:"g"(vector1),"g"(vector2)
             );
             end = clock();
+
+            printVector(&vector1);
 
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -278,21 +301,24 @@ void SISD_multiply(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits; j++)
+        for(int j = 0; j < 1; j++)
         {
             digit1 = populateSISD();
             digit2 = populateSISD();
 
             start = clock();
             asm volatile(
-                "flds %1\n"
-                "fmuls %2\n"
-                :"=t"(digit1)
+                "flds %0\n"
+                "fmuls %1\n"
+                "fsts sisd_result\n"
+                :
                 :"g"(digit1),"g"(digit2)
             );
             end = clock();
+
+            printf("%f * %f = %f", digit1, digit2, sisd_result);
             
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -310,12 +336,15 @@ void SIMD_divide(int numberOfDigits, Results *results)
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits/4; j++)
+        for(int j = 0; j < 1; j++)
         {
             populateSIMD(&vector1);
             populateSIMD(&vector2);
+
+            printVector(&vector1);
+            printVector(&vector2);
 
             start = clock();
             asm volatile(
@@ -328,6 +357,8 @@ void SIMD_divide(int numberOfDigits, Results *results)
             );
             end = clock();
 
+            printVector(&vector1);
+
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
     }
@@ -338,15 +369,15 @@ void SIMD_divide(int numberOfDigits, Results *results)
 void SISD_divide(int numberOfDigits, Results *results)
 {   
     float digit1,
-          digit2;
+        digit2;
     double avgTime = 0,
            currentTime = 0;
     clock_t start,
             end;
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {   
-        for(int j = 0; j < numberOfDigits; j++)
+        for(int j = 0; j < 1; j++)
         {
             digit1 = populateSISD();
             digit2 = populateSISD();
@@ -354,11 +385,14 @@ void SISD_divide(int numberOfDigits, Results *results)
             start = clock();
             asm volatile(
                 "flds %1\n"
-                "fdivs %2\n"
-                :"=t"(digit1)
+                "fdivs %0\n"
+                "fsts sisd_result\n"
+                :
                 :"g"(digit1),"g"(digit2)
             );
             end = clock();
+
+            printf("%f / %f = %f", digit2, digit1, sisd_result);
 
             avgTime += (double)(end - start)/CLOCKS_PER_SEC;
         }
@@ -374,40 +408,43 @@ int main()
 
     Results results[8];
 
-    // SIMD 
+    // SIMD
+    
     SIMD_add(2048, &results[0]);
-    SIMD_add(4096, &results[0]);
+    /*SIMD_add(4096, &results[0]);
     SIMD_add(8192, &results[0]);
-
+*/
+printf("\n\n");
     SIMD_substract(2048, &results[1]);
-    SIMD_substract(4096, &results[1]);
-    SIMD_substract(8192, &results[1]);
-    
+    //SIMD_substract(4096, &results[1]);
+    //SIMD_substract(8192, &results[1]);
+printf("\n\n");
     SIMD_multiply(2048, &results[2]);
-    SIMD_multiply(4096, &results[2]);
-    SIMD_multiply(8192, &results[2]);
-
-    SIMD_divide(2048, &results[3]);
-    SIMD_divide(4096, &results[3]);
+    //SIMD_multiply(4096, &results[2]);
+    //SIMD_multiply(8192, &results[2]);
+printf("\n\n");    
+   // SIMD_divide(2048, &results[3]);
+    //SIMD_divide(4096, &results[3]);
     SIMD_divide(8192, &results[3]);
-    
+  printf("\n\n");  
     // SISD
-    SISD_add(2048, &results[4]);
-    SISD_add(4096, &results[4]);
+
+    //SISD_add(2048, &results[4]);
+    //SISD_add(4096, &results[4]);
     SISD_add(8192, &results[4]);
-    
-    SISD_substract(2048, &results[5]);
-    SISD_substract(4096, &results[5]);
+printf("\n\n");
+    //SISD_substract(2048, &results[5]);
+    //SISD_substract(4096, &results[5]);
     SISD_substract(8192, &results[5]);
-
-    SISD_multiply(2048, &results[6]);
-    SISD_multiply(4096, &results[6]);
+printf("\n\n");
+    //SISD_multiply(2048, &results[6]);
+    //SISD_multiply(4096, &results[6]);
     SISD_multiply(8192, &results[6]);
-
+printf("\n\n");
     SISD_divide(2048, &results[7]);
-    SISD_divide(4096, &results[7]);
-    SISD_divide(8192, &results[7]);
-
+    //SISD_divide(4096, &results[7]);
+    //SISD_divide(8192, &results[7]);
+printf("\n\n");
     writeToFile(results);
 
     return 0;
