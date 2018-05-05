@@ -1,7 +1,0 @@
-#!/bin/bash
-
-fileName="$1"
-as "${fileName}.s" -o "${fileName}.o"
-ld "${fileName}.o" -o "$fileName"
-./"$fileName"
-

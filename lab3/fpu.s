@@ -44,7 +44,7 @@ _start:
 
     fldcw   control
 
-    jmp     generate_exceptions
+    #jmp     generate_exceptions
 
     #działania double
     jmp     add_d

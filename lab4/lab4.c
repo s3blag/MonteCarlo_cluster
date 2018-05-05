@@ -40,7 +40,7 @@ void writeToFile(Results results[])
         printf("Nie udalo sie otworzyc pliku");
         return;
     }
-
+    
     fprintf(destFile, "\nTyp obliczeń: SIMD\n"
                        "Liczba liczb: %d\n"
                        "Sredni czas: \n"
@@ -117,7 +117,7 @@ void SIMD_add(int numberOfDigits, Results *results)
             populateSIMD(&vector1);
             populateSIMD(&vector2);
             start = clock();
-            asm(
+            asm volatile(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "addps %%xmm1, %%xmm0\n"
@@ -151,7 +151,7 @@ void SISD_add(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm(
+            asm volatile(
                 "movl %1, %%eax\n"
                 "movl %2, %%ebx\n"
                 "addl %%eax, %%ebx\n"
@@ -184,7 +184,7 @@ void SIMD_substract(int numberOfDigits, Results *results)
             populateSIMD(&vector1);
             populateSIMD(&vector2);
             start = clock();
-            asm(
+            asm volatile(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "subps %%xmm1, %%xmm0\n"
@@ -218,7 +218,7 @@ void SISD_substract(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm(
+            asm volatile(
                 "movl %1, %%eax\n"
                 "movl %2, %%ebx\n"
                 "subl %%eax, %%ebx\n"
@@ -251,7 +251,7 @@ void SIMD_multiply(int numberOfDigits, Results *results)
             populateSIMD(&vector1);
             populateSIMD(&vector2);
             start = clock();
-            asm(
+            asm volatile(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "mulps %%xmm1, %%xmm0\n"
@@ -285,7 +285,7 @@ void SISD_multiply(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm(
+            asm volatile(
                 "movl %1, %%eax\n"
                 "movl %2, %%ebx\n"
                 "mull %%ebx\n"
@@ -319,7 +319,7 @@ void SIMD_divide(int numberOfDigits, Results *results)
             populateSIMD(&vector2);
 
             start = clock();
-            asm(
+            asm volatile(
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "divps %%xmm1, %%xmm0\n"
@@ -353,7 +353,7 @@ void SISD_divide(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm(
+            asm volatile(
                 "movl $0, %%edx\n"
                 "movl %1, %%eax\n"
                 "movl %2, %%ebx\n"

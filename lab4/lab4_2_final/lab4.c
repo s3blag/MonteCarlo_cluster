@@ -120,7 +120,7 @@ void SIMD_add(int numberOfDigits, Results *results)
             populateSIMD(&vector2);
              
             start = clock();
-            asm(
+            asm (
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "addps %%xmm1, %%xmm0\n"
@@ -154,7 +154,7 @@ void SISD_add(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm volatile(
+            asm (
                 "flds %1\n"
                 "fadds %2\n"
                 :"=t"(digit1)
@@ -186,7 +186,7 @@ void SIMD_substract(int numberOfDigits, Results *results)
             populateSIMD(&vector2);
 
             start = clock();
-            asm volatile(
+            asm (
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "subps %%xmm1, %%xmm0\n"
@@ -220,7 +220,7 @@ void SISD_substract(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm volatile(
+            asm (
                 "flds %1\n"
                 "fsubs %2\n"
                 :"=t"(digit1)
@@ -252,7 +252,7 @@ void SIMD_multiply(int numberOfDigits, Results *results)
             populateSIMD(&vector2);
 
             start = clock();
-            asm volatile(
+            asm (
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "mulps %%xmm1, %%xmm0\n"
@@ -286,7 +286,7 @@ void SISD_multiply(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm volatile(
+            asm (
                 "flds %1\n"
                 "fmuls %2\n"
                 :"=t"(digit1)
@@ -318,7 +318,7 @@ void SIMD_divide(int numberOfDigits, Results *results)
             populateSIMD(&vector2);
 
             start = clock();
-            asm volatile(
+            asm (
                 "movups %1, %%xmm0\n"
                 "movups %2, %%xmm1\n"
                 "divps %%xmm1, %%xmm0\n"
@@ -352,7 +352,7 @@ void SISD_divide(int numberOfDigits, Results *results)
             digit2 = populateSISD();
 
             start = clock();
-            asm volatile(
+            asm (
                 "flds %1\n"
                 "fdivs %2\n"
                 :"=t"(digit1)
