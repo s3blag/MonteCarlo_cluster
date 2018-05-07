@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern int calc(float x, float y, float r, int counter);
-extern float gen_rand(int r);
+extern int calc(int r, int numberOfPoints);
+
 int main()
 {   
     int seed = time(NULL);
@@ -11,7 +11,7 @@ int main()
     //int i = calc(4, 4, 5, 4);
     for( int j = 0; j < 10; j++)
     {
-       float i = gen_rand(20);
+       float i = calc(10, 2);
        printf("%f \n", i);
     }
     

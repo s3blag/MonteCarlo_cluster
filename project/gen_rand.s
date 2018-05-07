@@ -3,10 +3,8 @@
 
 .section .data
 
-value:    .float 10000.00
-value1:   .long 1
 output:
-.asciz "The result is %f\n"
+.asciz "The result (x or y) is %f\n"
 
 .text
 .type gen_rand, @function
@@ -34,7 +32,7 @@ generate:
     movl  8(%ebp), %ecx
     sal   %ecx
     movl  $10000, %eax
-    mull %ecx
+    mull  %ecx
   
     movl  %eax, %ecx
     popl  %eax
@@ -44,6 +42,12 @@ generate:
     fildl  -8(%ebp)
     fidivl -4(%ebp)
     fisubl  8(%ebp)
+
+    subl   $4, %esp
+    fstpl  (%esp)
+    pushl  $output
+    call   printf 
+    addl   $8, %esp
 
 exit:
     movl  %ebp, %esp
