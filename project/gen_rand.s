@@ -23,7 +23,7 @@ gen_rand:
     pushl %ebp              # prepare function
     movl  %esp, %ebp
     subl  $8, %esp
-    movl  $10000, -4(%ebp)
+    movl  $1000000, -4(%ebp)
 generate:
     call  rand
     pushl %eax
@@ -31,15 +31,14 @@ generate:
 
     movl  8(%ebp), %ecx
     sal   %ecx
-    movl  $10000, %eax
+    movl  $1000000, %eax
     mull  %ecx
   
     movl  %eax, %ecx
     popl  %eax
     divl  %ecx
     movl  %edx, -8(%ebp)
-    
-    finit
+
     
     fildl  -8(%ebp)
     fidivl -4(%ebp)

@@ -3,7 +3,7 @@
 .section .data
 
 output:
-.asciz "check\n"
+.asciz "check %f\n"
 
 .text
 .type calc, @function
@@ -25,35 +25,38 @@ calc:
     
     subl  $16, %esp
     
-    movl  $0, -12(%ebp)             # set point counter to 0
-    movl  $0, -16(%ebp)             # set loop counter to 0
+    movl  $0, -12(%ebp)       # set point counter to 0
+    movl  $0, -16(%ebp)       # set loop counter to 0
 
 loop:
     finit
-    incl  -16(%ebp)                 # increase loop counter   
+    incl  -16(%ebp)           # increase loop counter   
 
     # Generate x
     pushl 8(%ebp)
     call  gen_rand
     addl  $4, %esp
-    fstpl -4(%ebp) 
+    fstp -4(%ebp) 
 
     # Generate y
     pushl 8(%ebp)
     call  gen_rand
     addl  $4, %esp
-    fstpl -8(%ebp) 
+    fstp -8(%ebp) 
 
     flds  -4(%ebp)             # load x
-    fmul  %st(0)               # square x
+    fmul  %st(0), %st(0)       # square x
     
     flds  -8(%ebp)             # load y
-    fmul  %st(0)               # square y
+    fmul  %st(0), %st(0)       # square y
+
+
     fadd  %st(1), %st(0)       # x^2 + y^2
+        
 
-
-    flds  8(%ebp)              # load radius
+    filds  8(%ebp)             # load radius
     fmul  %st(0)               # square radius
+
     fcomi                      # check if r^2 >= x^2 + y^2
     jb    check_loop_counter   # jump if r^2 < x^2 + y^2
 
@@ -68,9 +71,6 @@ check_loop_counter:
 
 prepare_result:
     movl  -12(%ebp), %eax
-    #pushl  $output
-    #call   printf 
-    #addl   $4, %esp
 
 exit:
     movl  %ebp, %esp    

@@ -8,10 +8,13 @@ int main()
 {   
     int seed = time(NULL);
     srand(seed);
-    //int i = calc(4, 4, 5, 4);
 
-    int i = calc(10, 1);
+    int r = 1;
+    int numberOfPoints = 1000000;
 
-    
+
+    int i = calc(r, numberOfPoints);
+
+    printf("%f\n", ((float)i/numberOfPoints)*(float)(2*r*2*r) );
     return 0;
 }
