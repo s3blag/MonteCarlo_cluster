@@ -1,2 +1,2 @@
 all:
-	gcc -m32 -o output project.c square.s
+	gcc -m32 -o output project.c calc.s
