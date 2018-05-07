@@ -4,37 +4,52 @@
 .type calc, @function
 .globl calc
 
+#
+#   %edi     - points-in-circle counter
+#   %ecx     - loop counter 
+#
+
 calc:
     pushl %ebp              # prepare function
-    movl %esp, %ebp
-    subl $8, %esp
+    movl  %esp, %ebp
+    
+    pushl %ecx              # save registers state
+    pushl %edi
 
-    movl $0, -4(%ebp)       # set point counter to 0
-    movl $0, -8(%ebp)       # set loop counter to 0
+    #subl  $8, %esp
+
+    
+    movl  $0, %edi             # set point counter to 0
+    movl  $0, %ecx             # set loop counter to 0
 
 loop:
     finit
-    incl -8(%ebp)           # increase loop counter    
-    flds 8(%ebp)            # load x
-    fmul %st(0)             # square x
-    flds 12(%ebp)           # load y
-    fmul %st(0)             # square y
-    fadd %st(1), %st(0)     # x^2 + y^2
-    flds 16(%ebp)           # load radius
-    fmul %st(0)             # square radius
-    fcomi                   # check if x^2 + y^2 <= r^2
-    jbe continue
+    incl  %ecx                 # increase loop counter    
+    flds  8(%ebp)              # load x
+    fmul  %st(0)               # square x
+    flds  12(%ebp)             # load y
+    fmul  %st(0)               # square y
+    fadd  %st(1), %st(0)       # x^2 + y^2
+    flds  16(%ebp)             # load radius
+    fmul  %st(0)               # square radius
+    fcomi                      # check if r^2 >= x^2 + y^2
+    jb    check_loop_counter   # jump if r^2 < x^2 + y^2
 
-count:
-    incl -4(%ebp)           # increase point counter
+increment_counter:
+    incl  %edi               
 
-continue:
-    movl -8(%ebp), %eax     # check loop counter
-    cmp 20(%ebp), %eax
-    jl loop
+check_loop_counter:
+    cmpl  20(%ebp), %ecx
+    jl    loop
+
+prepare_result:
+    movl  %edi, %eax
+
+restore_registers:
+    popl %edi              
+    popl %ecx
 
 exit:
-    movl -4(%ebp), %eax
-    movl %ebp, %esp
-    popl %ebp
+    movl  %ebp, %esp
+    popl  %ebp
     ret
