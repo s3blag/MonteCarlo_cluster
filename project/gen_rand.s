@@ -39,15 +39,17 @@ generate:
     divl  %ecx
     movl  %edx, -8(%ebp)
     
+    finit
+    
     fildl  -8(%ebp)
     fidivl -4(%ebp)
     fisubl  8(%ebp)
 
-    subl   $4, %esp
-    fstpl  (%esp)
-    pushl  $output
-    call   printf 
-    addl   $8, %esp
+    #subl   $4, %esp
+    #fstpl  (%esp)
+    #pushl  $output
+    #call   printf 
+    #addl   $8, %esp
 
 exit:
     movl  %ebp, %esp

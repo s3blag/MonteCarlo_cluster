@@ -9,11 +9,9 @@ int main()
     int seed = time(NULL);
     srand(seed);
     //int i = calc(4, 4, 5, 4);
-    for( int j = 0; j < 10; j++)
-    {
-       float i = calc(10, 2);
-       printf("%f \n", i);
-    }
+
+    int i = calc(10, 1);
+
     
     return 0;
 }
