@@ -34,32 +34,17 @@ generate:
     movl  8(%ebp), %ecx
     sal   %ecx
     movl  $10000, %eax
-    mul   %ecx
+    mull %ecx
+  
     movl  %eax, %ecx
     popl  %eax
     divl  %ecx
-    movl  %edx, (value1)
+    movl  %edx, -8(%ebp)
     
-    
-    finit
-    flds  value1
-    fidivs  value
-    fisubs  8(%ebp)
-    #subl $8, %esp
-    #fstpl (%esp)
-    #pushl $output
-    #call printf 
-    #addl $8, %esp
-    #fld  -8(%ebp)
-    #filds  -4(%ebp)
-    #filds  value1
-    
-    #fdiv
-    #fsubs  8(%ebp)
+    fildl  -8(%ebp)
+    fidivl -4(%ebp)
+    fisubl  8(%ebp)
 
-prepare_result:
-    #movl  %edx, %eax
-    movl  value1, %eax
 exit:
     movl  %ebp, %esp
     popl  %ebp

@@ -9,16 +9,11 @@ int main()
     int seed = time(NULL);
     srand(seed);
     //int i = calc(4, 4, 5, 4);
-    for( int j = 0; j < 20; j++)
+    for( int j = 0; j < 10; j++)
     {
        float i = gen_rand(20);
        printf("%f \n", i);
     }
     
     return 0;
-}
-
-int multiply(int a, int b)
-{
-    return a*b;
 }
