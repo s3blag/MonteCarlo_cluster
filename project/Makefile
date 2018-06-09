@@ -1,2 +1,2 @@
 all:
-	gcc -m32 -o output project.c calc.s gen_rand.s
+	gcc -m64 -o output project.c calculate.s gen_rand.s
