@@ -25,7 +25,7 @@ gen_rand:
 
 generate:
     mov  %eax, -4(%rbp) 
-    mov  $1000, %ebx         # -> mult
+    mov  $10000, %ebx         # -> mult
     mov  %ebx, -8(%rbp)
 
     addl %ebx, %ebx          # 2 * mult -> x

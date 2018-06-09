@@ -2,22 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-//extern int calc(int r, int numberOfPoints);
-
-extern float gen_rand(int r);
+extern int calculate(int r, int numberOfPoints);
 
 int main()
 {   
-    int seed = time(NULL);
-    srand(seed);
+    srand(time(NULL));
+    int r = 1,
+        numberOfPoints = 2000000000;
 
-    int r = 1;
-    int numberOfPoints = 1000000;
+    int result = calculate(r, numberOfPoints);
 
-    float i = gen_rand(r);
-
-    printf("rand: [%f]\n", i );
-    //int i = calc(r, numberOfPoints);
-    //printf("%f\n", ((float)i/numberOfPoints)*(float)(2*r*2*r) );
+    printf("%f\n", ((float)result/numberOfPoints)*(float)(2*r*2*r) );
     return 0;
 }
