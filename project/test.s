@@ -1,86 +1,101 @@
 	.file	"test.c"
 	.text
-	.globl	eeezy
-	.type	eeezy, @function
-eeezy:
-.LFB0:
+	.globl	gen_rand
+	.type	gen_rand, @function
+gen_rand:
+.LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	fldz
-	fstps	8(%ebp)
-	nop
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+
+
+	subq	 $48, %rsp
+	movl	 %edi, -36(%rbp)     #    r    #
+
+	movl	 $1000, -24(%rbp)	###########
+	movl	 -24(%rbp), %eax
+	addl	 %eax, %eax			# 2 * 1000# - a
+	imull	 -36(%rbp), %eax     # a*r#  ## modulus
+	movl	 %eax, -20(%rbp)
+
+	call	 rand
+	movl	 %eax, -16(%rbp)
+	movl	 -16(%rbp), %eax    # rand res#
+	cltd                        # edx:eax #
+	idivl	 -20(%rbp)			#rand / modulus #
+	movl	 %edx, -12(%rbp)    # reszta #
+
+	# -12(%rbp) - licznik
+	# -24(%rbp) - mianownik
+	# -36(%rbp) - r
+
+	pxor	 %xmm0, %xmm0
+	cvtsi2ss -12(%rbp), %xmm0
+	pxor	 %xmm1, %xmm1
+	cvtsi2ss -24(%rbp), %xmm1
+
+	divss	 %xmm1, %xmm0
+	movss	 %xmm0, -8(%rbp)
+
+	# lewa strona w -8(%rbp)
+
+	pxor	 %xmm0, %xmm0
+	cvtsi2ss -36(%rbp), %xmm0
+	movss	 -8(%rbp), %xmm1
+	subss	 %xmm0, %xmm1
+
+	movaps 	 %xmm1, %xmm0
+	movss	 %xmm0, -4(%rbp)
+	movss    -4(%rbp), %xmm0
+
+
+	leave
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
-.LFE0:
-	.size	eeezy, .-eeezy
+.LFE2:
+	.size	gen_rand, .-gen_rand
 	.section	.rodata
-.LC2:
-	.string	"%f\n"
+.LC0:
+	.string	"rand: [%f]\n"
 	.text
 	.globl	main
 	.type	main, @function
 main:
-.LFB1:
+.LFB3:
 	.cfi_startproc
-	leal	4(%esp), %ecx
-	.cfi_def_cfa 1, 0
-	andl	$-16, %esp
-	pushl	-4(%ecx)
-	pushl	%ebp
-	.cfi_escape 0x10,0x5,0x2,0x75,0
-	movl	%esp, %ebp
-	pushl	%ecx
-	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
-	subl	$52, %esp
-	movl	$10000, -28(%ebp)
-	movl	$31, -24(%ebp)
-	movl	$17, -20(%ebp)
-	movl	$19, -16(%ebp)
-	movl	-28(%ebp), %eax
-	imull	-24(%ebp), %eax
-	cltd
-	idivl	-16(%ebp)
-	movl	%edx, -52(%ebp)
-	fildl	-52(%ebp)
-	fildl	-20(%ebp)
-	fdivrp	%st, %st(1)
-	fstps	-12(%ebp)
-	flds	-12(%ebp)
-	subl	$4, %esp
-	leal	-8(%esp), %esp
-	fstpl	(%esp)
-	pushl	$.LC2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	$0, %edi
+	call	time
+
+	movl	%eax, %edi
+	call	srand
+
+	movl	$1, -8(%rbp)
+	movl	-8(%rbp), %eax
+	movl	%eax, %edi
+	call	gen_rand
+
+	movd	%xmm0, %eax
+	movl	%eax, -4(%rbp)
+	cvtss2sd	-4(%rbp), %xmm0
+	movl	$.LC0, %edi
+	movl	$1, %eax
 	call	printf
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	-12(%ebp)
-	call	eeezy
-	addl	$16, %esp
-	flds	-12(%ebp)
-	fnstcw	-42(%ebp)
-	movzwl	-42(%ebp), %eax
-	movb	$12, %ah
-	movw	%ax, -44(%ebp)
-	fldcw	-44(%ebp)
-	fistpl	-48(%ebp)
-	fldcw	-42(%ebp)
-	movl	-48(%ebp), %eax
-	movl	-4(%ebp), %ecx
-	.cfi_def_cfa 1, 0
+	movl	$0, %eax
 	leave
-	.cfi_restore 5
-	leal	-4(%ecx), %esp
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
-.LFE1:
+.LFE3:
 	.size	main, .-main
 	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609"
 	.section	.note.GNU-stack,"",@progbits
