@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <mpi.h>
+#include <unistd.h>
 
 extern int calculate(int r, int numberOfPoints);
 
@@ -23,23 +24,41 @@ int main(int argc, char** argv)
     srand(seed);
 
     int r = 1;
-    int numberOfPoints = 2000000000;
+    int numberOfPoints = 100000000;
 
+    int result =0;
+	
+    int *arr = malloc (sizeof(int) * world_size);
+    for (int i = 0; i < world_size; i++)
+        arr[i] = 0;
+    
     clock_t start,
             end;
 
     start = clock();
-    int points = calculate(r, numberOfPoints);
+    result = calculate(r, numberOfPoints);
     end = clock();
             
     double timeResult = (double)(end - start)/CLOCKS_PER_SEC;
-
-    float result = ((float)points/numberOfPoints)*(float)(2*r*2*r);
     
-    printf("Computer: _%s_ Core: %d/%d\n"
-           "   result: %f time:[%f]\n",
-            processor_name, world_rank, world_size, result, timeResult);
+    printf("\nComputer: _%s_ Core: %d/%d [time:[%f]]\n",
+            processor_name, world_rank+1, world_size, timeResult);
 
+    MPI_Gather(&result, 1, MPI_INT, arr, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    
+    if (world_rank == 0)
+    {
+        long long int totalSum = 0;
+        for (int i = 0; i < world_size; i++)
+        {
+            totalSum += arr[i];
+        }
+
+        double result = ((double)totalSum/(numberOfPoints*world_size))*(double)(2*r*2*r);
+        printf("\n\nResult: [%lf]\n\n", result);
+    }
+
+    free(arr);
     MPI_Finalize();
     
     return 0;
